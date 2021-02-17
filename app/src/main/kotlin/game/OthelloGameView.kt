@@ -11,36 +11,20 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import java.lang.IllegalArgumentException
 
 @Composable
-fun OthelloGameView() {
-    var turn by remember { mutableStateOf<Turn>(Turn.Black) }
-    val board = remember {
-        GameBoard().apply {
-            start()
-        }
-    }
+fun OthelloGameView(game: OthelloGame) {
 
     // 8 x 8
     // Column
     // Row
-    (0 until 8).forEach { colum ->
+    (0 until 8).forEach { column ->
         Column {
             Row {
                 (0 until 8).forEach { row ->
-                    PieceView(board.get(colum, row), onClicked = {
-                        when (turn) {
-                            Turn.Black -> {
-                                board.set(colum, row, value = Piece.Black)
-                                turn = Turn.White
-                            }
-                            Turn.White -> {
-                                board.set(colum, row, value = Piece.White)
-                                turn = Turn.Black
-                            }
-                        }
+                    PieceView(game.board.get(column, row), onClicked = {
+                        game.play(column, row)
                     })
                 }
             }
@@ -54,34 +38,87 @@ fun PieceView(piece: Piece, onClicked: () -> Unit) {
         Button(onClick = onClicked) {
             Text(
                 text = when (piece) {
-                    is Piece.Empty -> ""
-                    is Piece.White -> "○"
-                    is Piece.Black -> "●"
+                    Piece.Empty -> ""
+                    Piece.White -> "○"
+                    Piece.Black -> "●"
                 }
             )
         }
     }
 }
 
-class GameBoard {
-    val boardValues = mutableStateMapOf<Pair<Int, Int>, Piece>()
+class OthelloGame {
+    var turn by mutableStateOf<Turn>(Turn.Black)
+    val board = GameBoard()
+    var state by mutableStateOf(GameState.NotStart)
 
+    // Fun Game Action by Human
     fun start() {
-        boardValues.clear()
-        boardValues[3 to 3] = Piece.White
-        boardValues[4 to 4] = Piece.White
-        boardValues[3 to 4] = Piece.Black
-        boardValues[4 to 3] = Piece.Black
+        board.clear()
+        board.set(3, 3, Piece.White)
+        board.set(4, 4, Piece.White)
+        board.set(3, 4, Piece.Black)
+        board.set(4, 3, Piece.Black)
+
+        state = GameState.Playing
     }
+
+    fun play(column: Int, row: Int) {
+        if (state != GameState.Playing) {
+            return
+        }
+
+        if (!checkValidPlay(column, row, turn)) {
+            return
+        }
+        board.set(
+            column, row, value = when (turn) {
+                Turn.Black -> Piece.Black
+                Turn.White -> Piece.White
+            }
+        )
+        if (checkEnd()) {
+            // State End
+            state = GameState.Ended
+        }
+        turn = turn.toggle()
+    }
+
+    fun pass() {
+        turn = turn.toggle()
+    }
+
+    private fun checkValidPlay(column: Int, row: Int, player: Turn): Boolean {
+        return true
+    }
+
+    private fun checkEnd(): Boolean {
+        // * one player can not make a valid move to outflank the opponent.
+        // * both players have no valid moves.
+        return false
+    }
+
+    fun end() {
+        state = GameState.Ended
+    }
+}
+
+class GameBoard {
+    val values: Map<Pair<Int, Int>, Piece> get() = _values
+    private val _values = mutableStateMapOf<Pair<Int, Int>, Piece>()
 
     fun set(column: Int, row: Int, value: Piece) {
         checkPoint(column, row)
-        boardValues[column to row] = value
+        _values[column to row] = value
     }
 
     fun get(column: Int, row: Int): Piece {
         checkPoint(column, row)
-        return boardValues.getOrDefault(column to row, Piece.Empty)
+        return _values.getOrDefault(column to row, Piece.Empty)
+    }
+
+    fun clear() {
+        _values.clear()
     }
 
     private fun checkPoint(column: Int, row: Int) {
@@ -91,13 +128,27 @@ class GameBoard {
     }
 }
 
-sealed class Turn {
-    object Black : Turn()
-    object White : Turn()
+enum class GameState {
+    NotStart,
+    Playing,
+    Ended,
+    ;
 }
 
-sealed class Piece {
-    object Empty : Piece()
-    object White : Piece()
-    object Black : Piece()
+enum class Turn {
+    Black,
+    White,
+    ;
+
+    fun toggle(): Turn = when (this) {
+        Black -> White
+        White -> Black
+    }
+}
+
+enum class Piece {
+    Empty,
+    White,
+    Black,
+    ;
 }
