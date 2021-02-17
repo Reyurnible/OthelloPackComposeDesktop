@@ -78,14 +78,18 @@ class OthelloGame {
             }
         )
         if (checkEnd()) {
-            // State End
-            state = GameState.Ended
+            end()
+            return
         }
         turn = turn.toggle()
     }
 
     fun pass() {
         turn = turn.toggle()
+    }
+
+    fun end() {
+        state = GameState.Ended
     }
 
     private fun checkValidPlay(column: Int, row: Int, player: Turn): Boolean {
@@ -96,10 +100,6 @@ class OthelloGame {
         // * one player can not make a valid move to outflank the opponent.
         // * both players have no valid moves.
         return false
-    }
-
-    fun end() {
-        state = GameState.Ended
     }
 }
 
