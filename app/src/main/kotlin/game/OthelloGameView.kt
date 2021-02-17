@@ -48,9 +48,9 @@ fun PieceView(piece: Piece, onClicked: () -> Unit) {
 }
 
 class OthelloGame {
-    var turn by mutableStateOf<Turn>(Turn.Black)
+    // var turn by mutableStateOf<Turn>(Turn.Black)
     val board = GameBoard()
-    var state by mutableStateOf(GameState.NotStart)
+    var state by mutableStateOf<GameState>(GameState.NotStart)
 
     // Fun Game Action by Human
     fun start() {
@@ -60,14 +60,15 @@ class OthelloGame {
         board.set(3, 4, Piece.Black)
         board.set(4, 3, Piece.Black)
 
-        state = GameState.Playing
+        state = GameState.Playing(turn = Turn.Black)
     }
 
     fun play(column: Int, row: Int) {
-        if (state != GameState.Playing) {
+        if (state !is GameState.Playing) {
             return
         }
 
+        val turn = (state as GameState.Playing).turn
         if (!checkValidPlay(column, row, turn)) {
             return
         }
@@ -81,11 +82,16 @@ class OthelloGame {
             end()
             return
         }
-        turn = turn.toggle()
+
+        state = GameState.Playing(turn.toggle())
     }
 
     fun pass() {
-        turn = turn.toggle()
+        if (state !is GameState.Playing) {
+            return
+        }
+        val newTurn = (state as GameState.Playing).turn.toggle()
+        state = GameState.Playing(newTurn)
     }
 
     fun end() {
@@ -128,11 +134,10 @@ class GameBoard {
     }
 }
 
-enum class GameState {
-    NotStart,
-    Playing,
-    Ended,
-    ;
+sealed class GameState {
+    object NotStart : GameState()
+    data class Playing(val turn: Turn) : GameState()
+    object Ended : GameState()
 }
 
 enum class Turn {

@@ -3,7 +3,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import game.GameState
@@ -18,21 +17,21 @@ fun main() = Window {
             OthelloGameView(game)
             Button(onClick = {
                 when (game.state) {
-                    GameState.NotStart -> {
+                    is GameState.NotStart -> {
                         game.start()
                     }
-                    GameState.Playing -> {
+                    is GameState.Playing -> {
                         game.end()
                     }
-                    GameState.Ended -> {
+                    is GameState.Ended -> {
                         game.start()
                     }
                 }
             }) {
                 Text(when (game.state) {
-                    GameState.NotStart -> "START"
-                    GameState.Playing -> "END"
-                    GameState.Ended -> "RESTART"
+                    is GameState.NotStart -> "START"
+                    is GameState.Playing -> "END"
+                    is GameState.Ended -> "RESTART"
                 })
             }
         }
