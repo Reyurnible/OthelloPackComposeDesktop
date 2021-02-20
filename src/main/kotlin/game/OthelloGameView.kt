@@ -7,11 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonConstants
 import androidx.compose.material.Text
@@ -23,6 +21,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import game.models.GameBoard
 import game.models.GameResult
 import game.models.GameState
 import game.models.OthelloGame
@@ -37,9 +36,9 @@ fun OthelloGameView(game: OthelloGame) {
         Column(
             Modifier.background(Color.Black).padding(4.dp)
         ) {
-            (0 until 8).forEach { column ->
+            GameBoard.COLUMN_RANGE.forEach { column ->
                 Row {
-                    (0 until 8).forEach { row ->
+                    GameBoard.ROW_RANGE.forEach { row ->
                         PieceView(game.board.get(column, row), onClicked = {
                             game.play(column, row)
                         })
@@ -49,28 +48,36 @@ fun OthelloGameView(game: OthelloGame) {
         }
         // End Game
         if (game.state is GameState.Ended) {
-            Column(
-                Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.7f)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text("GAME END", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = when (val result = (game.state as GameState.Ended).result) {
-                        is GameResult.WinAndLose -> {
-                            "Winner ${result.winner.name}"
-                        }
-                        is GameResult.Draw -> {
-                            "DRAW"
-                        }
-                    },
-                    color = Color.White,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            GameEndView(
+                (game.state as GameState.Ended).result,
+                Modifier.matchParentSize()
+            )
         }
+    }
+}
+
+@Composable
+fun GameEndView(result: GameResult, matchParentModifier: Modifier) {
+    Column(
+        matchParentModifier.background(Color.Black.copy(alpha = 0.7f)),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text("GAME END", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = when (result) {
+                is GameResult.WinAndLose -> {
+                    "Winner ${result.winner.name}"
+                }
+                is GameResult.Draw -> {
+                    "DRAW"
+                }
+            },
+            color = Color.White,
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

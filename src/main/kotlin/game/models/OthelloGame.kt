@@ -12,15 +12,15 @@ class OthelloGame {
     // Fun Game Action by Human
     fun start() {
         board.clear()
-        board.set(3, 3, Piece.White)
-        board.set(4, 4, Piece.White)
-        board.set(3, 4, Piece.Black)
-        board.set(4, 3, Piece.Black)
+        board.set(4, 'd', Piece.White)
+        board.set(5, 'e', Piece.White)
+        board.set(4, 'e', Piece.Black)
+        board.set(5, 'd', Piece.Black)
 
         state = GameState.Playing(player = GamePlayer.Black)
     }
 
-    fun play(column: Int, row: Int) {
+    fun play(column: BoardColumn, row: BoardRow) {
         if (state !is GameState.Playing) {
             return
         }
@@ -61,7 +61,7 @@ class OthelloGame {
         )
     }
 
-    private fun checkValidPlay(column: Int, row: Int, player: GamePlayer): Boolean {
+    private fun checkValidPlay(column: BoardColumn, row: BoardRow, player: GamePlayer): Boolean {
         // Check already exist
         if (!checkValidPlayAlreadyExist(column, row)) {
             return false
@@ -75,17 +75,17 @@ class OthelloGame {
         return true
     }
 
-    private fun checkValidPlayAlreadyExist(column: Int, row: Int): Boolean =
-        board.get(column, row) == Piece.Empty
+    private fun checkValidPlayAlreadyExist(column: BoardColumn, row: BoardRow): Boolean =
+        board.isEmpty(column, row)
 
-    private fun checkValidPlayTake(column: Int, row: Int, player: GamePlayer): Boolean =
+    private fun checkValidPlayTake(column: BoardColumn, row: BoardRow, player: GamePlayer): Boolean =
         checkPointsList(column, row)
             .any {
                 isSandArrayPoint(it, player.piece(), player.toggle().piece())
             }
 
-    private fun checkPointsList(column: Int, row: Int): List<List<Pair<Int, Int>>> =
-        (0 until GameBoard.MAX)
+    private fun checkPointsList(column: BoardColumn, row: BoardRow): List<List<BoardPoint>> =
+        (0 until GameBoard.SIZE)
             .let { range ->
                 arrayOf(
                     // Vertical
@@ -106,23 +106,23 @@ class OthelloGame {
                 }
             }
 
-    private fun isSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece): Boolean {
-        var count = 0
+    private fun isSandArrayPoint(points: Iterable<BoardPoint>, current: Piece, target: Piece): Boolean {
         if (current == Piece.Empty || target == Piece.Empty) {
             throw IllegalArgumentException("Invalid piece is not Empty value to current and target.")
         }
+        var count = 0
         points
             // 最初の自分のコマは無視する
             .filterIndexed { index, _ -> index > 0 }
-            .forEach { (column, row) ->
+            .forEach {
                 when {
-                    board.get(column, row) == target -> {
+                    board.get(it) == target -> {
                         count++
                     }
-                    board.get(column, row) == current -> {
+                    board.get(it) == current -> {
                         return count > 0
                     }
-                    board.get(column, row) == Piece.Empty -> {
+                    board.isEmpty(it) -> {
                         return false
                     }
                 }
@@ -130,18 +130,18 @@ class OthelloGame {
         return false
     }
 
-    private fun takeSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece) {
+    private fun takeSandArrayPoint(points: Iterable<BoardPoint>, current: Piece, target: Piece) {
         if (!isSandArrayPoint(points, current, target)) {
             return
         }
         points
             .filterIndexed { index, _ -> index > 0 }
-            .forEach { (column, row) ->
+            .forEach {
                 when {
-                    board.get(column, row) == target -> {
-                        board.set(column, row, current)
+                    board.get(it) == target -> {
+                        board.set(it, current)
                     }
-                    board.get(column, row) != target -> {
+                    board.get(it) != target -> {
                         return
                     }
                 }
@@ -156,8 +156,8 @@ class OthelloGame {
 
     private fun countPlayingValue(): Int {
         var count = 0
-        GameBoard.RANGE.forEach { column ->
-            GameBoard.RANGE.forEach { row ->
+        GameBoard.COLUMN_RANGE.forEach { column ->
+            GameBoard.ROW_RANGE.forEach { row ->
                 if (board.get(column, row) == Piece.Empty) {
                     if (checkValidPlay(column, row, GamePlayer.Black) ||
                         checkValidPlay(column, row, GamePlayer.White)) {

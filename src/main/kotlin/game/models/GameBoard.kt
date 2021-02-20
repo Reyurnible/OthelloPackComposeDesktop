@@ -3,29 +3,50 @@ package game.models
 import androidx.compose.runtime.mutableStateMapOf
 import java.lang.IllegalArgumentException
 
+typealias BoardPoint = Pair<BoardColumn, BoardRow>
+typealias BoardColumn = Int
+typealias BoardRow = Char
+
 class GameBoard {
     companion object {
-        const val MIN = 0
-        const val MAX = 8
+        const val SIZE = 8
+        private const val COLUMN_MIN = 1
+        private const val COLUMN_MAX = SIZE
+        private const val ROW_MIN = 'a'
+        private const val ROW_MAX = 'h'
 
-        val RANGE = MIN until MAX
+        val COLUMN_RANGE = COLUMN_MIN..COLUMN_MAX
+        val ROW_RANGE = ROW_MIN..ROW_MAX
 
-        fun isContains(column: Int, row: Int) =
-            column in RANGE && row in RANGE
+        fun isContains(column: BoardColumn, row: BoardRow) =
+            column in COLUMN_RANGE && row in ROW_RANGE
     }
 
-    val values: Map<Pair<Int, Int>, Piece> get() = _values
-    private val _values = mutableStateMapOf<Pair<Int, Int>, Piece>()
+    val values: Map<BoardPoint, Piece> get() = _values
+    private val _values = mutableStateMapOf<BoardPoint, Piece>()
 
-    fun set(column: Int, row: Int, value: Piece) {
+    fun set(point: BoardPoint, value: Piece) {
+        set(point.first, point.second, value)
+    }
+
+    fun set(column: BoardColumn, row: BoardRow, value: Piece) {
         checkPoint(column, row)
         _values[column to row] = value
     }
 
-    fun get(column: Int, row: Int): Piece {
+    fun get(point: BoardPoint): Piece =
+        get(point.first, point.second)
+
+    fun get(column: BoardColumn, row: BoardRow): Piece {
         checkPoint(column, row)
         return _values.getOrDefault(column to row, Piece.Empty)
     }
+
+    fun isEmpty(point: BoardPoint): Boolean =
+        isEmpty(point.first, point.second)
+
+    fun isEmpty(column: BoardColumn, row: BoardRow): Boolean =
+        get(column, row) == Piece.Empty
 
     fun clear() {
         _values.clear()
@@ -34,8 +55,8 @@ class GameBoard {
     fun count(piece: Piece): Int =
         values.count { it.value == piece }
 
-    private fun checkPoint(column: Int, row: Int) {
-        if (column !in MIN until MAX || row !in MIN until MAX) {
+    private fun checkPoint(column: BoardColumn, row: BoardRow) {
+        if (!isContains(column, row)) {
             throw IllegalArgumentException("Invalidate point(column: ${column}, row: ${row}) value.")
         }
     }

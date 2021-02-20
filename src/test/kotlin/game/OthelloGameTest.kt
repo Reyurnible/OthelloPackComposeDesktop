@@ -25,10 +25,10 @@ internal class OthelloGameTest {
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
         Assert.assertEquals(4, game.board.values.size)
         Assert.assertEquals(2, game.board.values.filter { it.value == Piece.Black }.size)
-        Assert.assertEquals(Piece.White, game.board.get(3, 3))
-        Assert.assertEquals(Piece.White, game.board.get(4, 4))
-        Assert.assertEquals(Piece.Black, game.board.get(3, 4))
-        Assert.assertEquals(Piece.Black, game.board.get(4, 3))
+        Assert.assertEquals(Piece.White, game.board.get(4, 'd'))
+        Assert.assertEquals(Piece.White, game.board.get(5, 'e'))
+        Assert.assertEquals(Piece.Black, game.board.get(4, 'e'))
+        Assert.assertEquals(Piece.Black, game.board.get(5, 'd'))
     }
 
     @Test
@@ -36,11 +36,11 @@ internal class OthelloGameTest {
         game.start()
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
         // 5f
-        game.play(4, 5)
+        game.play(5, 'f')
         Assert.assertEquals(5, game.board.values.size)
         Assert.assertEquals(4, game.board.values.filter { it.value == Piece.Black }.size)
         // Change to 5e
-        Assert.assertEquals(Piece.Black, game.board.get(4, 4))
+        Assert.assertEquals(Piece.Black, game.board.get(5, 'e'))
         Assert.assertEquals(GameState.Playing(GamePlayer.White), game.state)
     }
 
@@ -48,12 +48,12 @@ internal class OthelloGameTest {
     fun play_success_newpiece_3d_vertical_top() {
         game.start()
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
-        game.play(2, 3)
+        game.play(3, 'd')
         Assert.assertEquals(5, game.board.values.size)
         Assert.assertEquals(4, game.board.values.filter { it.value == Piece.Black }.size)
         Assert.assertEquals(GameState.Playing(GamePlayer.White), game.state)
         // Change to 4d
-        Assert.assertEquals(Piece.Black, game.board.get(3, 3))
+        Assert.assertEquals(Piece.Black, game.board.get(4, 'd'))
         Assert.assertEquals(GameState.Playing(GamePlayer.White), game.state)
     }
 
@@ -62,8 +62,8 @@ internal class OthelloGameTest {
         game.start()
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
 
-        // FIXME Current not yet handling check valid empty.
-        game.play(3, 3)
+        // Current not yet handling check valid empty.
+        game.play(4, 'd')
         Assert.assertEquals(4, game.board.values.size)
         Assert.assertEquals(2, game.board.values.filter { it.value == Piece.Black }.size)
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
@@ -74,8 +74,8 @@ internal class OthelloGameTest {
         game.start()
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
 
-        // FIXME Current not yet handling check valid play.
-        game.play(6, 6)
+        // Current not yet handling check valid play.
+        game.play(7, 'g')
         Assert.assertEquals(4, game.board.values.size)
         Assert.assertEquals(2, game.board.values.filter { it.value == Piece.Black }.size)
         Assert.assertEquals(GameState.Playing(GamePlayer.Black), game.state)
@@ -99,7 +99,7 @@ internal class OthelloGameTest {
     @Test
     fun end_winner_black() {
         game.start()
-        game.play(4, 5)
+        game.play(5, 'f')
         // Black : White = 4 : 1
         game.end()
         Assert.assertEquals(GameState.Ended(GameResult.WinAndLose(GamePlayer.Black)), game.state)
