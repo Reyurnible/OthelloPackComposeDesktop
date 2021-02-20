@@ -5,8 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonConstants
 import androidx.compose.material.Text
@@ -23,15 +26,15 @@ fun OthelloGameView(game: OthelloGame) {
     // 8 x 8
     // Column
     // Row
-    Box(Modifier.padding(8.dp)) {
-        Column(Modifier.background(Color.Black).padding(4.dp)) {
-            (0 until 8).forEach { column ->
-                Row {
-                    (0 until 8).forEach { row ->
-                        PieceView(game.board.get(column, row), onClicked = {
-                            game.play(column, row)
-                        })
-                    }
+    Column(
+        Modifier.background(Color.Black).padding(4.dp)
+    ) {
+        (0 until 8).forEach { column ->
+            Row {
+                (0 until 8).forEach { row ->
+                    PieceView(game.board.get(column, row), onClicked = {
+                        game.play(column, row)
+                    })
                 }
             }
         }
@@ -39,11 +42,11 @@ fun OthelloGameView(game: OthelloGame) {
 }
 
 @Composable
-fun PieceView(piece: Piece, onClicked: () -> Unit) {
+fun PieceView(piece: Piece, onClicked: () -> Unit = {}) {
     Box {
         Button(
             onClick = onClicked,
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier.size(64.dp),
             shape = RectangleShape,
             colors = ButtonConstants.defaultButtonColors(
                 backgroundColor = Color(0xFF15712A),
