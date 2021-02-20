@@ -81,23 +81,27 @@ class OthelloGame {
             }
 
     private fun checkPointsList(column: Int, row: Int): List<List<Pair<Int, Int>>> =
-        arrayOf(
-            // Vertical
-            (0 until GameBoard.MAX).map { column - it to row },
-            (0 until GameBoard.MAX).map { column + it to row },
-            // Horizontal
-            (0 until GameBoard.MAX).map { column to row - it },
-            (0 until GameBoard.MAX).map { column to row + it },
-            // Cross
-            (0 until GameBoard.MAX).map { column - it to row - it },
-            (0 until GameBoard.MAX).map { column - it to row + it },
-            (0 until GameBoard.MAX).map { column + it to row - it },
-            (0 until GameBoard.MAX).map { column + it to row + it },
-        ).map {
-            it.filter { (column, row) ->
-                column in GameBoard.MIN until GameBoard.MAX && row in GameBoard.MIN until GameBoard.MAX
+        (0 until GameBoard.MAX)
+            .let { range ->
+                arrayOf(
+                    // Vertical
+                    range.map { column - it to row },
+                    range.map { column + it to row },
+                    // Horizontal
+                    range.map { column to row - it },
+                    range.map { column to row + it },
+                    // Cross
+                    range.map { column - it to row - it },
+                    range.map { column - it to row + it },
+                    range.map { column + it to row - it },
+                    range.map { column + it to row + it },
+                ).map {
+                    it.filter { (column, row) ->
+                        GameBoard.isContains(column, row)
+                    }
+                }
             }
-        }
+
 
     private fun isSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece): Boolean {
         var count = 0
@@ -124,19 +128,21 @@ class OthelloGame {
     }
 
     private fun takeSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece) {
-        if (isSandArrayPoint(points, current, target)) {
-            points
-                .forEachIndexed { index, (column, row) ->
-                    when {
-                        index > 0 && board.get(column, row) == target -> {
-                            board.set(column, row, current)
-                        }
-                        index > 0 && board.get(column, row) != current -> {
-                            return@forEachIndexed
-                        }
+        if (!isSandArrayPoint(points, current, target)) {
+            return
+        }
+        points
+            .filterIndexed { index, _ -> index > 0 }
+            .forEach { (column, row) ->
+                when {
+                    board.get(column, row) == target -> {
+                        board.set(column, row, current)
+                    }
+                    board.get(column, row) != current -> {
+                        return
                     }
                 }
-        }
+            }
     }
 
     private fun checkEnd(): Boolean {

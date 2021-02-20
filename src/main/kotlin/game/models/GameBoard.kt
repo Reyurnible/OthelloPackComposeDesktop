@@ -7,6 +7,11 @@ class GameBoard {
     companion object {
         const val MIN = 0
         const val MAX = 8
+
+        val RANGE = MIN until MAX
+
+        fun isContains(column: Int, row: Int) =
+            column in RANGE && row in RANGE
     }
 
     val values: Map<Pair<Int, Int>, Piece> get() = _values
