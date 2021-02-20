@@ -105,18 +105,17 @@ class OthelloGame {
             throw IllegalArgumentException("Invalid piece is not Empty value to current and target.")
         }
         points
-            .forEachIndexed { index, (column, row) ->
+            // 最初の自分のコマは無視する
+            .filterIndexed { index, _ -> index > 0 }
+            .forEach { (column, row) ->
                 when {
-                    index == 0 -> {
-                        // Nothing
-                    }
-                    index > 0 && board.get(column, row) == target -> {
+                    board.get(column, row) == target -> {
                         count++
                     }
-                    index > 0 && board.get(column, row) == current -> {
+                    board.get(column, row) == current -> {
                         return count > 0
                     }
-                    index > 0 && board.get(column, row) == Piece.Empty -> {
+                    board.get(column, row) == Piece.Empty -> {
                         return false
                     }
                 }
@@ -138,7 +137,6 @@ class OthelloGame {
                     }
                 }
         }
-
     }
 
     private fun checkEnd(): Boolean {
