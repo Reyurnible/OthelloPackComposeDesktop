@@ -76,7 +76,7 @@ class OthelloGame {
     }
 
     private fun checkValidPlayAlreadyExist(column: BoardColumn, row: BoardRow): Boolean =
-        board.get(column, row) == Piece.Empty
+        board.isEmpty(column, row)
 
     private fun checkValidPlayTake(column: BoardColumn, row: BoardRow, player: GamePlayer): Boolean =
         checkPointsList(column, row)
@@ -107,10 +107,10 @@ class OthelloGame {
             }
 
     private fun isSandArrayPoint(points: Iterable<BoardPoint>, current: Piece, target: Piece): Boolean {
-        var count = 0
         if (current == Piece.Empty || target == Piece.Empty) {
             throw IllegalArgumentException("Invalid piece is not Empty value to current and target.")
         }
+        var count = 0
         points
             // 最初の自分のコマは無視する
             .filterIndexed { index, _ -> index > 0 }
@@ -122,7 +122,7 @@ class OthelloGame {
                     board.get(it) == current -> {
                         return count > 0
                     }
-                    board.get(it) == Piece.Empty -> {
+                    board.isEmpty(it) -> {
                         return false
                     }
                 }

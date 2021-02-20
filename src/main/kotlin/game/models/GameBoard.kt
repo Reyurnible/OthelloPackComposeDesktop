@@ -15,8 +15,8 @@ class GameBoard {
         private const val ROW_MIN = 'a'
         private const val ROW_MAX = 'h'
 
-        val COLUMN_RANGE = COLUMN_MIN .. COLUMN_MAX
-        val ROW_RANGE = ROW_MIN .. ROW_MAX
+        val COLUMN_RANGE = COLUMN_MIN..COLUMN_MAX
+        val ROW_RANGE = ROW_MIN..ROW_MAX
 
         fun isContains(column: BoardColumn, row: BoardRow) =
             column in COLUMN_RANGE && row in ROW_RANGE
@@ -41,6 +41,12 @@ class GameBoard {
         checkPoint(column, row)
         return _values.getOrDefault(column to row, Piece.Empty)
     }
+
+    fun isEmpty(point: BoardPoint): Boolean =
+        isEmpty(point.first, point.second)
+
+    fun isEmpty(column: BoardColumn, row: BoardRow): Boolean =
+        get(column, row) == Piece.Empty
 
     fun clear() {
         _values.clear()
