@@ -24,6 +24,10 @@ internal class OthelloGameTest {
         Assert.assertEquals(GameState.Playing(Turn.Black), game.state)
         Assert.assertEquals(4, game.board.values.size)
         Assert.assertEquals(2, game.board.values.filter { it.value == Piece.Black }.size)
+        Assert.assertEquals(Piece.White, game.board.get(3, 3))
+        Assert.assertEquals(Piece.White, game.board.get(4, 4))
+        Assert.assertEquals(Piece.Black, game.board.get(3, 4))
+        Assert.assertEquals(Piece.Black, game.board.get(4, 3))
     }
 
     @Test
@@ -33,7 +37,9 @@ internal class OthelloGameTest {
         // 5f
         game.play(4, 5)
         Assert.assertEquals(5, game.board.values.size)
-        Assert.assertEquals(3, game.board.values.filter { it.value == Piece.Black }.size)
+        Assert.assertEquals(4, game.board.values.filter { it.value == Piece.Black }.size)
+        // Change to 5e
+        Assert.assertEquals(Piece.Black, game.board.get(4, 4))
         Assert.assertEquals(GameState.Playing(Turn.White), game.state)
     }
 
@@ -43,7 +49,10 @@ internal class OthelloGameTest {
         Assert.assertEquals(GameState.Playing(Turn.Black), game.state)
         game.play(2, 3)
         Assert.assertEquals(5, game.board.values.size)
-        Assert.assertEquals(3, game.board.values.filter { it.value == Piece.Black }.size)
+        Assert.assertEquals(4, game.board.values.filter { it.value == Piece.Black }.size)
+        Assert.assertEquals(GameState.Playing(Turn.White), game.state)
+        // Change to 4d
+        Assert.assertEquals(Piece.Black, game.board.get(3, 3))
         Assert.assertEquals(GameState.Playing(Turn.White), game.state)
     }
 
