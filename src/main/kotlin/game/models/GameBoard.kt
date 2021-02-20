@@ -21,6 +21,9 @@ class GameBoard {
         _values.clear()
     }
 
+    fun count(piece: Piece): Int =
+        values.count { it.value == piece }
+
     private fun checkPoint(column: Int, row: Int) {
         if (column !in 0 until 8 || row !in 0 until 8) {
             throw IllegalArgumentException("Invalidate point(column: ${column}, row: ${row}) value.")
