@@ -2,11 +2,13 @@ package game
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -14,11 +16,15 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonConstants
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import game.models.GameResult
+import game.models.GameState
 import game.models.OthelloGame
 import game.models.Piece
 
@@ -27,16 +33,42 @@ fun OthelloGameView(game: OthelloGame) {
     // 8 x 8
     // Column
     // Row
-    Column(
-        Modifier.background(Color.Black).padding(4.dp)
-    ) {
-        (0 until 8).forEach { column ->
-            Row {
-                (0 until 8).forEach { row ->
-                    PieceView(game.board.get(column, row), onClicked = {
-                        game.play(column, row)
-                    })
+    Box {
+        Column(
+            Modifier.background(Color.Black).padding(4.dp)
+        ) {
+            (0 until 8).forEach { column ->
+                Row {
+                    (0 until 8).forEach { row ->
+                        PieceView(game.board.get(column, row), onClicked = {
+                            game.play(column, row)
+                        })
+                    }
                 }
+            }
+        }
+        // End Game
+        if (game.state is GameState.Ended) {
+            Column(
+                Modifier.matchParentSize().background(Color.Black.copy(alpha = 0.7f)),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text("GAME END", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = when (val result = (game.state as GameState.Ended).result) {
+                        is GameResult.WinAndLose -> {
+                            "Winner ${result.winner.name}"
+                        }
+                        is GameResult.Draw -> {
+                            "DRAW"
+                        }
+                    },
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

@@ -1,11 +1,11 @@
 package game.models
 
-enum class Turn {
+enum class GamePlayer {
     Black,
     White,
     ;
 
-    fun toggle(): Turn = when (this) {
+    fun toggle(): GamePlayer = when (this) {
         Black -> White
         White -> Black
     }
