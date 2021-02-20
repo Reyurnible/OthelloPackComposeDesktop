@@ -53,7 +53,13 @@ class OthelloGame {
     }
 
     fun end() {
-        state = GameState.Ended
+        state = GameState.Ended(
+            when {
+                board.count(Piece.Black) > board.count(Piece.White) -> GameResult.WinAndLose(Turn.Black)
+                board.count(Piece.White) > board.count(Piece.Black) -> GameResult.WinAndLose(Turn.White)
+                else -> GameResult.Draw
+            }
+        )
     }
 
     private fun checkValidPlay(column: Int, row: Int, player: Turn): Boolean {

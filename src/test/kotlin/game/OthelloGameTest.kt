@@ -1,5 +1,6 @@
 package game
 
+import game.models.GameResult
 import game.models.GameState
 import game.models.OthelloGame
 import game.models.Piece
@@ -89,10 +90,18 @@ internal class OthelloGameTest {
     }
 
     @Test
-    fun end() {
+    fun end_draw() {
         game.start()
-        Assert.assertEquals(GameState.Playing(Turn.Black), game.state)
         game.end()
-        Assert.assertEquals(GameState.Ended, game.state)
+        Assert.assertEquals(GameState.Ended(GameResult.Draw), game.state)
+    }
+
+    @Test
+    fun end_winner_black() {
+        game.start()
+        game.play(4, 5)
+        // Black : White = 4 : 1
+        game.end()
+        Assert.assertEquals(GameState.Ended(GameResult.WinAndLose(Turn.Black)), game.state)
     }
 }
