@@ -138,7 +138,7 @@ class OthelloGame {
                     board.get(column, row) == target -> {
                         board.set(column, row, current)
                     }
-                    board.get(column, row) != current -> {
+                    board.get(column, row) != target -> {
                         return
                     }
                 }
