@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import game.models.GameBoard
 import game.models.GameResult
 import game.models.GameState
 import game.models.OthelloGame
@@ -35,9 +36,9 @@ fun OthelloGameView(game: OthelloGame) {
         Column(
             Modifier.background(Color.Black).padding(4.dp)
         ) {
-            (0 until 8).forEach { column ->
+            GameBoard.COLUMN_RANGE.forEach { column ->
                 Row {
-                    (0 until 8).forEach { row ->
+                    GameBoard.ROW_RANGE.forEach { row ->
                         PieceView(game.board.get(column, row), onClicked = {
                             game.play(column, row)
                         })
