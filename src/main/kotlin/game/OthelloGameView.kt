@@ -1,9 +1,19 @@
 package game
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonConstants
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Shapes
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +21,11 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 import java.lang.IllegalArgumentException
 
 @Composable
@@ -19,13 +34,15 @@ fun OthelloGameView(game: OthelloGame) {
     // 8 x 8
     // Column
     // Row
-    (0 until 8).forEach { column ->
-        Column {
-            Row {
-                (0 until 8).forEach { row ->
-                    PieceView(game.board.get(column, row), onClicked = {
-                        game.play(column, row)
-                    })
+    Box(Modifier.padding(8.dp)) {
+        Column(Modifier.background(Color.Black).padding(4.dp)) {
+            (0 until 8).forEach { column ->
+                Row {
+                    (0 until 8).forEach { row ->
+                        PieceView(game.board.get(column, row), onClicked = {
+                            game.play(column, row)
+                        })
+                    }
                 }
             }
         }
@@ -35,7 +52,21 @@ fun OthelloGameView(game: OthelloGame) {
 @Composable
 fun PieceView(piece: Piece, onClicked: () -> Unit) {
     Box {
-        Button(onClick = onClicked) {
+        Button(
+            onClick = onClicked,
+            modifier = Modifier.size(48.dp),
+            shape = RectangleShape,
+            colors = ButtonConstants.defaultButtonColors(
+                backgroundColor = Color(0xFF15712A),
+                disabledBackgroundColor = Color.LightGray,
+                contentColor = when (piece) {
+                    Piece.Empty -> Color.Red
+                    Piece.White -> Color.White
+                    Piece.Black -> Color.Black
+                }
+            ),
+            border = BorderStroke(1.dp, Color.Black)
+        ) {
             Text(
                 text = when (piece) {
                     Piece.Empty -> ""
