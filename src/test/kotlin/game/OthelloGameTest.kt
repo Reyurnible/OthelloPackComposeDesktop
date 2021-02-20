@@ -1,5 +1,9 @@
 package game
 
+import game.models.GameState
+import game.models.OthelloGame
+import game.models.Piece
+import game.models.Turn
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
