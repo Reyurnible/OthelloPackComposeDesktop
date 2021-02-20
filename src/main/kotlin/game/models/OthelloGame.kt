@@ -63,7 +63,6 @@ class OthelloGame {
     }
 
     private fun checkValidPlay(column: Int, row: Int, player: Turn): Boolean {
-        println("checkValidPlay(${column}, ${row}, ${player})")
         // Check already exist
         if (!checkValidPlayAlreadyExist(column, row)) {
             return false
@@ -153,6 +152,21 @@ class OthelloGame {
     private fun checkEnd(): Boolean {
         // * one player can not make a valid move to outflank the opponent.
         // * both players have no valid moves.
-        return board.values.count { it.value != Piece.Empty } >= (GameBoard.MAX * GameBoard.MAX)
+        return countPlayingValue() <= 0
+    }
+
+    private fun countPlayingValue(): Int {
+        var count = 0
+        GameBoard.RANGE.forEach { column ->
+            GameBoard.RANGE.forEach { row ->
+                if (board.get(column, row) == Piece.Empty) {
+                    if (checkValidPlay(column, row, Turn.Black) ||
+                        checkValidPlay(column, row, Turn.White)) {
+                        count++
+                    }
+                }
+            }
+        }
+        return count
     }
 }
