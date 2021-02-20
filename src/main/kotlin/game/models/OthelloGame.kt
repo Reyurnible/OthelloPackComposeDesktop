@@ -31,6 +31,11 @@ class OthelloGame {
             return
         }
         board.set(column, row, value = turn.piece())
+        checkPointsList(column, row)
+            .forEach {
+                takeSandArrayPoint(it, turn.piece(), turn.toggle().piece())
+            }
+
         if (checkEnd()) {
             end()
             return
@@ -59,56 +64,40 @@ class OthelloGame {
         }
 
         // Check take piece
-        val isCheckValidPlayTakeVertical = checkValidPlayTakeVertical(column, row, player)
-        println("checkValidPlayTakeVertical: ${isCheckValidPlayTakeVertical}")
-        val isCheckHorizontalPlayTakeVertical = checkHorizontalPlayTakeVertical(column, row, player)
-        println("checkHorizontalPlayTakeVertical: ${isCheckHorizontalPlayTakeVertical}")
-        val isCheckHorizontalPlayTakeCross = checkHorizontalPlayTakeCross(column, row, player)
-        println("checkHorizontalPlayTakeCross: ${checkHorizontalPlayTakeCross(column, row, player)}")
-        return isCheckValidPlayTakeVertical
-            || isCheckHorizontalPlayTakeVertical
-            || isCheckHorizontalPlayTakeCross
-//        return (checkValidPlayTakeVertical(column, row, player)
-//            || checkHorizontalPlayTakeVertical(column, row, player)
-//            || checkHorizontalPlayTakeCross(column, row, player))
+        if (!checkValidPlayTake(column, row, player)) {
+            return false
+        }
+
+        return true
     }
 
     private fun checkValidPlayAlreadyExist(column: Int, row: Int): Boolean =
         board.get(column, row) == Piece.Empty
 
-    private fun checkValidPlayTakeVertical(column: Int, row: Int, player: Turn): Boolean =
-        isSandArrayPoint((GameBoard.MIN..column).map { it to row }.reversed(), player.piece(), player.toggle().piece())
-            || isSandArrayPoint((column until GameBoard.MAX).map { it to row }, player.piece(), player.toggle().piece())
+    private fun checkValidPlayTake(column: Int, row: Int, player: Turn): Boolean =
+        checkPointsList(column, row)
+            .any {
+                isSandArrayPoint(it, player.piece(), player.toggle().piece())
+            }
 
-    private fun checkHorizontalPlayTakeVertical(column: Int, row: Int, player: Turn): Boolean =
-        isSandArrayPoint((GameBoard.MIN..row).map { column to it }.reversed(), player.piece(), player.toggle().piece())
-            || isSandArrayPoint((row until GameBoard.MAX).map { column to it }, player.piece(), player.toggle().piece())
-
-    private fun checkHorizontalPlayTakeCross(column: Int, row: Int, player: Turn): Boolean =
-        // Top - Left
-        isSandArrayPoint(
+    private fun checkPointsList(column: Int, row: Int): List<List<Pair<Int, Int>>> =
+        arrayOf(
+            // Vertical
+            (0 until GameBoard.MAX).map { column - it to row },
+            (0 until GameBoard.MAX).map { column + it to row },
+            // Horizontal
+            (0 until GameBoard.MAX).map { column to row - it },
+            (0 until GameBoard.MAX).map { column to row + it },
+            // Cross
             (0 until GameBoard.MAX).map { column - it to row - it },
-            player.piece(),
-            player.toggle().piece()
-        )
-            // Top - Right
-            || isSandArrayPoint(
             (0 until GameBoard.MAX).map { column - it to row + it },
-            player.piece(),
-            player.toggle().piece()
-        )
-            // Bottom - Left
-            || isSandArrayPoint(
             (0 until GameBoard.MAX).map { column + it to row - it },
-            player.piece(),
-            player.toggle().piece()
-        )
-            // Bottom - Right
-            || isSandArrayPoint(
             (0 until GameBoard.MAX).map { column + it to row + it },
-            player.piece(),
-            player.toggle().piece()
-        )
+        ).map {
+            it.filter { (column, row) ->
+                column in GameBoard.MIN until GameBoard.MAX && row in GameBoard.MIN until GameBoard.MAX
+            }
+        }
 
     private fun isSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece): Boolean {
         var count = 0
@@ -116,14 +105,6 @@ class OthelloGame {
             throw IllegalArgumentException("Invalid piece is not Empty value to current and target.")
         }
         points
-            .filter { (column, row) ->
-                column in GameBoard.MIN until GameBoard.MAX
-                    && row in GameBoard.MIN until GameBoard.MAX
-            }
-            .let {
-                println("points: ${it}")
-                it
-            }
             .forEachIndexed { index, (column, row) ->
                 when {
                     index == 0 -> {
@@ -138,6 +119,23 @@ class OthelloGame {
                 }
             }
         return false
+    }
+
+    private fun takeSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece) {
+        if (isSandArrayPoint(points, current, target)) {
+            points
+                .forEachIndexed { index, (column, row) ->
+                    when {
+                        index > 0 && board.get(column, row) == target -> {
+                            board.set(column, row, current)
+                        }
+                        index > 0 && board.get(column, row) != current -> {
+                            return@forEachIndexed
+                        }
+                    }
+                }
+        }
+
     }
 
     private fun checkEnd(): Boolean {
