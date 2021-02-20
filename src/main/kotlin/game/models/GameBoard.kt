@@ -3,6 +3,7 @@ package game.models
 import androidx.compose.runtime.mutableStateMapOf
 import java.lang.IllegalArgumentException
 
+typealias BoardPoint = Pair<BoardColumn, BoardRow>
 typealias BoardColumn = Int
 typealias BoardRow = Char
 
@@ -21,13 +22,20 @@ class GameBoard {
             column in COLUMN_RANGE && row in ROW_RANGE
     }
 
-    val values: Map<Pair<BoardColumn, BoardRow>, Piece> get() = _values
-    private val _values = mutableStateMapOf<Pair<BoardColumn, BoardRow>, Piece>()
+    val values: Map<BoardPoint, Piece> get() = _values
+    private val _values = mutableStateMapOf<BoardPoint, Piece>()
+
+    fun set(point: BoardPoint, value: Piece) {
+        set(point.first, point.second, value)
+    }
 
     fun set(column: BoardColumn, row: BoardRow, value: Piece) {
         checkPoint(column, row)
         _values[column to row] = value
     }
+
+    fun get(point: BoardPoint): Piece =
+        get(point.first, point.second)
 
     fun get(column: BoardColumn, row: BoardRow): Piece {
         checkPoint(column, row)

@@ -84,7 +84,7 @@ class OthelloGame {
                 isSandArrayPoint(it, player.piece(), player.toggle().piece())
             }
 
-    private fun checkPointsList(column: BoardColumn, row: BoardRow): List<List<Pair<BoardColumn, BoardRow>>> =
+    private fun checkPointsList(column: BoardColumn, row: BoardRow): List<List<BoardPoint>> =
         (0 until GameBoard.SIZE)
             .let { range ->
                 arrayOf(
@@ -106,7 +106,7 @@ class OthelloGame {
                 }
             }
 
-    private fun isSandArrayPoint(points: Iterable<Pair<BoardColumn, BoardRow>>, current: Piece, target: Piece): Boolean {
+    private fun isSandArrayPoint(points: Iterable<BoardPoint>, current: Piece, target: Piece): Boolean {
         var count = 0
         if (current == Piece.Empty || target == Piece.Empty) {
             throw IllegalArgumentException("Invalid piece is not Empty value to current and target.")
@@ -114,15 +114,15 @@ class OthelloGame {
         points
             // 最初の自分のコマは無視する
             .filterIndexed { index, _ -> index > 0 }
-            .forEach { (column, row) ->
+            .forEach {
                 when {
-                    board.get(column, row) == target -> {
+                    board.get(it) == target -> {
                         count++
                     }
-                    board.get(column, row) == current -> {
+                    board.get(it) == current -> {
                         return count > 0
                     }
-                    board.get(column, row) == Piece.Empty -> {
+                    board.get(it) == Piece.Empty -> {
                         return false
                     }
                 }
@@ -130,18 +130,18 @@ class OthelloGame {
         return false
     }
 
-    private fun takeSandArrayPoint(points: Iterable<Pair<BoardColumn, BoardRow>>, current: Piece, target: Piece) {
+    private fun takeSandArrayPoint(points: Iterable<BoardPoint>, current: Piece, target: Piece) {
         if (!isSandArrayPoint(points, current, target)) {
             return
         }
         points
             .filterIndexed { index, _ -> index > 0 }
-            .forEach { (column, row) ->
+            .forEach {
                 when {
-                    board.get(column, row) == target -> {
-                        board.set(column, row, current)
+                    board.get(it) == target -> {
+                        board.set(it, current)
                     }
-                    board.get(column, row) != target -> {
+                    board.get(it) != target -> {
                         return
                     }
                 }
