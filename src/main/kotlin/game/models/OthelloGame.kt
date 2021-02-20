@@ -116,6 +116,9 @@ class OthelloGame {
                     index > 0 && board.get(column, row) == current -> {
                         return count > 0
                     }
+                    index > 0 && board.get(column, row) == Piece.Empty -> {
+                        return false
+                    }
                 }
             }
         return false
