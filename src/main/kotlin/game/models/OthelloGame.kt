@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import java.lang.IllegalArgumentException
 
 class OthelloGame {
-    // var turn by mutableStateOf<Turn>(Turn.Black)
     val board = GameBoard()
     var state by mutableStateOf<GameState>(GameState.NotStart)
 
@@ -18,7 +17,7 @@ class OthelloGame {
         board.set(3, 4, Piece.Black)
         board.set(4, 3, Piece.Black)
 
-        state = GameState.Playing(turn = Turn.Black)
+        state = GameState.Playing(player = GamePlayer.Black)
     }
 
     fun play(column: Int, row: Int) {
@@ -26,14 +25,14 @@ class OthelloGame {
             return
         }
 
-        val turn = (state as GameState.Playing).turn
-        if (!checkValidPlay(column, row, turn)) {
+        val turnPlayer = (state as GameState.Playing).player
+        if (!checkValidPlay(column, row, turnPlayer)) {
             return
         }
-        board.set(column, row, value = turn.piece())
+        board.set(column, row, value = turnPlayer.piece())
         checkPointsList(column, row)
             .forEach {
-                takeSandArrayPoint(it, turn.piece(), turn.toggle().piece())
+                takeSandArrayPoint(it, turnPlayer.piece(), turnPlayer.toggle().piece())
             }
 
         if (checkEnd()) {
@@ -41,28 +40,28 @@ class OthelloGame {
             return
         }
 
-        state = GameState.Playing(turn.toggle())
+        state = GameState.Playing(turnPlayer.toggle())
     }
 
     fun pass() {
         if (state !is GameState.Playing) {
             return
         }
-        val newTurn = (state as GameState.Playing).turn.toggle()
+        val newTurn = (state as GameState.Playing).player.toggle()
         state = GameState.Playing(newTurn)
     }
 
     fun end() {
         state = GameState.Ended(
             when {
-                board.count(Piece.Black) > board.count(Piece.White) -> GameResult.WinAndLose(Turn.Black)
-                board.count(Piece.White) > board.count(Piece.Black) -> GameResult.WinAndLose(Turn.White)
+                board.count(Piece.Black) > board.count(Piece.White) -> GameResult.WinAndLose(GamePlayer.Black)
+                board.count(Piece.White) > board.count(Piece.Black) -> GameResult.WinAndLose(GamePlayer.White)
                 else -> GameResult.Draw
             }
         )
     }
 
-    private fun checkValidPlay(column: Int, row: Int, player: Turn): Boolean {
+    private fun checkValidPlay(column: Int, row: Int, player: GamePlayer): Boolean {
         // Check already exist
         if (!checkValidPlayAlreadyExist(column, row)) {
             return false
@@ -79,7 +78,7 @@ class OthelloGame {
     private fun checkValidPlayAlreadyExist(column: Int, row: Int): Boolean =
         board.get(column, row) == Piece.Empty
 
-    private fun checkValidPlayTake(column: Int, row: Int, player: Turn): Boolean =
+    private fun checkValidPlayTake(column: Int, row: Int, player: GamePlayer): Boolean =
         checkPointsList(column, row)
             .any {
                 isSandArrayPoint(it, player.piece(), player.toggle().piece())
@@ -160,8 +159,8 @@ class OthelloGame {
         GameBoard.RANGE.forEach { column ->
             GameBoard.RANGE.forEach { row ->
                 if (board.get(column, row) == Piece.Empty) {
-                    if (checkValidPlay(column, row, Turn.Black) ||
-                        checkValidPlay(column, row, Turn.White)) {
+                    if (checkValidPlay(column, row, GamePlayer.Black) ||
+                        checkValidPlay(column, row, GamePlayer.White)) {
                         count++
                     }
                 }

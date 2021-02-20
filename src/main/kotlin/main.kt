@@ -10,17 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Text
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonConstants
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +26,7 @@ import game.PieceView
 import game.models.GameState
 import game.models.OthelloGame
 import game.models.Piece
-import game.models.Turn
+import game.models.GamePlayer
 
 fun main() = Window {
     val game = remember { OthelloGame() }
@@ -53,9 +50,9 @@ fun GameMenuView(game: OthelloGame) {
         Text("TURN", color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(4.dp))
         PieceView((game.state as? GameState.Playing)?.let {
-            when (it.turn) {
-                Turn.Black -> Piece.Black
-                Turn.White -> Piece.White
+            when (it.player) {
+                GamePlayer.Black -> Piece.Black
+                GamePlayer.White -> Piece.White
             }
         } ?: Piece.Empty, onClicked = {})
 
