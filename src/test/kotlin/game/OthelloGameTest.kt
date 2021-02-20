@@ -27,11 +27,21 @@ internal class OthelloGameTest {
     }
 
     @Test
-    fun play_success_newpiece() {
+    fun play_success_newpiece_f5_horizontal_right() {
         game.start()
         Assert.assertEquals(GameState.Playing(Turn.Black), game.state)
-        // f5
-        game.play(5, 5)
+        // 5f
+        game.play(4, 5)
+        Assert.assertEquals(5, game.board.values.size)
+        Assert.assertEquals(3, game.board.values.filter { it.value == Piece.Black }.size)
+        Assert.assertEquals(GameState.Playing(Turn.White), game.state)
+    }
+
+    @Test
+    fun play_success_newpiece_3d_vertical_top() {
+        game.start()
+        Assert.assertEquals(GameState.Playing(Turn.Black), game.state)
+        game.play(2, 3)
         Assert.assertEquals(5, game.board.values.size)
         Assert.assertEquals(3, game.board.values.filter { it.value == Piece.Black }.size)
         Assert.assertEquals(GameState.Playing(Turn.White), game.state)
