@@ -112,6 +112,9 @@ class OthelloGame {
 
     private fun isSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece): Boolean {
         var count = 0
+        if (current == Piece.Empty || target == Piece.Empty) {
+            throw IllegalArgumentException("Invalid piece is not Empty value to current and target.")
+        }
         points
             .filter { (column, row) ->
                 column in GameBoard.MIN until GameBoard.MAX
@@ -121,15 +124,15 @@ class OthelloGame {
                 println("points: ${it}")
                 it
             }
-            .forEachIndexed { index, point ->
+            .forEachIndexed { index, (column, row) ->
                 when {
                     index == 0 -> {
                         // Nothing
                     }
-                    index > 0 && board.values[point] == target -> {
+                    index > 0 && board.get(column, row) == target -> {
                         count++
                     }
-                    index > 0 && board.values[point] == current -> {
+                    index > 0 && board.get(column, row) == current -> {
                         return count > 0
                     }
                 }
