@@ -102,7 +102,6 @@ class OthelloGame {
                 }
             }
 
-
     private fun isSandArrayPoint(points: Iterable<Pair<Int, Int>>, current: Piece, target: Piece): Boolean {
         var count = 0
         if (current == Piece.Empty || target == Piece.Empty) {
@@ -148,6 +147,6 @@ class OthelloGame {
     private fun checkEnd(): Boolean {
         // * one player can not make a valid move to outflank the opponent.
         // * both players have no valid moves.
-        return false
+        return board.values.count { it.value != Piece.Empty } >= (GameBoard.MAX * GameBoard.MAX)
     }
 }
