@@ -4,6 +4,11 @@ import androidx.compose.runtime.mutableStateMapOf
 import java.lang.IllegalArgumentException
 
 class GameBoard {
+    companion object {
+        const val MIN = 0
+        const val MAX = 8
+    }
+
     val values: Map<Pair<Int, Int>, Piece> get() = _values
     private val _values = mutableStateMapOf<Pair<Int, Int>, Piece>()
 
@@ -25,7 +30,7 @@ class GameBoard {
         values.count { it.value == piece }
 
     private fun checkPoint(column: Int, row: Int) {
-        if (column !in 0 until 8 || row !in 0 until 8) {
+        if (column !in MIN until MAX || row !in MIN until MAX) {
             throw IllegalArgumentException("Invalidate point(column: ${column}, row: ${row}) value.")
         }
     }
