@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import game.models.OthelloGame
 import game.models.Piece
 
@@ -62,9 +63,10 @@ fun PieceView(piece: Piece, onClicked: () -> Unit = {}) {
             Text(
                 text = when (piece) {
                     Piece.Empty -> ""
-                    Piece.White -> "○"
+                    Piece.White -> "●"
                     Piece.Black -> "●"
-                }
+                },
+                fontSize = 48.sp
             )
         }
     }
