@@ -56,6 +56,14 @@ class OthelloGame {
     }
 
     private fun checkValidPlay(column: Int, row: Int, player: Turn): Boolean {
+        // Check already exist
+        if (board.get(column, row) != Piece.Empty) {
+            return false
+        }
+
+        // Check take piece
+
+
         return true
     }
 
